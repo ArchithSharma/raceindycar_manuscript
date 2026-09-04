@@ -362,7 +362,7 @@ Differing weather conditions between qualifying and race day were not accounted 
 
 ## Conclusion
 
-Overall, this project creates new opportunities for data analytics in the IndyCar realm through the raceindycar package and offers a novel method of comparing races across series through our numerical analysis.
+Overall, this project creates new opportunities for data analytics in the IndyCar realm through the RaceIndyCar package and offers a novel method of comparing races across series through our numerical analysis.
 
 ::: {.content-visible when-format="html"}
 ## References {.unnumbered}
