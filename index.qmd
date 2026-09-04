@@ -1,5 +1,5 @@
 ---
-title: "RaceIndyCar: Analysis of motorsport qualifying with a novel Python package"
+title: "Start Strong: An Analysis of Motorsport Qualifying with a Novel Python Package"
 author:
   - name: "Anonymous"
     orcid: "[0000-0000-0000-0000]"
@@ -41,10 +41,7 @@ format:
   jasa-pdf:
     fig-pos: 'H'
   
-    
-    
 ---
-
 ## Introduction
 
 Competitive motorsports are unique compared to other sports because, through qualifying, an advantage can be gained before the day of the event. Formula 1 (F1), NASCAR, and IndyCar all hold qualifying sessions that, on the surface, appear to have varying effects on the results of the race. For example, take two seven-time champions of their respective series: Lewis Hamilton (F1) and Jimmie Johnson (NASCAR). 61 of Lewis Hamilton's 106 race wins [@statsf1_hamilton] came from pole position, compared to a mere 15 of Jimmie Johnson's 83 wins [@motorsportstats_johnson], pointing to potentially drastic differences in the relative importance of qualifying across race series.
@@ -86,7 +83,7 @@ indy25 = raceindycar.get_event(2025, "Indianapolis 500")
 # Identify all sessions (such as practices and qualifying) for the event.
 session_info = indy25.sessions
 
-# Get a specific session from an event, with the edefault as the race session.
+# Get a specific session from an event, with the default as the race session.
 # The session argument can either be an EventsSessionID or a SessionName string.
 race_session = indy25.get_session(session="R")
 
@@ -190,7 +187,7 @@ plt.show()
 
 This library mirrors [FastF1's `Cache`](https://docs.fastf1.dev/api_reference/cache_and_rate_limits.html) API, and there are two stages for caching.
 
-The first stage uses an SQLite table to store HTTP requests and results for [IndyCar](https://www.indycar.com/), which are rate limited to around one request per two seconds. The second stage stores Pickle/CSV files that contain information from loading a race.
+The first stage uses an SQLite table to store HTTP requests and results for [IndyCar](https://www.indycar.com/), which are rate-limited to around one request per two seconds. The second stage stores Pickle/CSV files that contain information from loading a race.
 
 ```{python}
 from raceindycar.cache import Cache
@@ -252,7 +249,7 @@ F_{ir} &= \alpha_r + \beta_4 Q_{ir} + \gamma_3 \text{DQ}^z_{ir} + \delta_3 \text
 \end{aligned}
 $$ {#eq-models}
 
-Reduced/full pairs (e.g. M2 vs. M3) are always fit on an identical common sample, so any R² difference reflects the added variable alone rather than sample drift.
+Reduced/full pairs (e.g., M2 vs. M3) are always fit on an identical common sample, so any R² difference reflects the added variable alone rather than sample drift.
 
 ### Partial R²
 
@@ -283,7 +280,7 @@ Through our method, we find that position is a meaningful but partial predictor 
 
 First, we examine how qualifying position relates to finishing position across the three series. We also look at the amount of position changes that occur from qualifying to finish, which is a proxy for how much variance there is in the race itself. 
 
-@fig-quali-eda shows that in F1, for the high starting positions, has a higher average finish position than the other two series. However, this advantage compared to IndyCar ends at around position 7. NASCAR's curve is flatter compared to the other two series, indicating that average finish positions for many starting positions are similar. 
+@fig-quali-eda shows that, in F1, high starting positions have a higher average finish position than in the other two series. However, this advantage compared to IndyCar ends at around position 7. NASCAR's curve is flatter compared to the other two series, indicating that average finish positions for many starting positions are similar. 
 
 ::: {#fig-eda-raw layout-ncol=2}
 
@@ -294,7 +291,7 @@ First, we examine how qualifying position relates to finishing position across t
 EDA of qualifying position vs. finishing position and passes per race
 :::
 
-In addition, each NASCAR driver performs around 6 times as many passes as an F1 driver and over double the number for IndyCar drivers.
+In addition, each NASCAR driver performs approximately 6 times as many passes as an F1 driver and over double the number for IndyCar drivers.
 
 The scatter of qualifying position against finishing position (@fig-quali-finish) shows a clear positive slope in all three series, but with very different amounts of scatter around it. F1's cloud is tightest and most linear; IndyCar and NASCAR show substantially more vertical spread at every starting position, consistent with more frequent late-race reshuffling (strategy, cautions, pit-stop variance) loosening the grid-to-finish relationship. This is echoed in the position-gain histograms (@fig-position-gain): F1 drivers cluster tightly around "no change" from qualifying to finish, while IndyCar and especially NASCAR show wide, roughly symmetric distributions of gains and losses spanning ±20 to ±40 positions — a signature of much higher in-race variance.
 
@@ -342,19 +339,19 @@ Qualifying's incremental explanatory power compared against underlying driver an
 
 ### Qualifying and Lap 1 Position
 
-As a secondary check, qualifying position correlates very strongly with observed Lap 1 running position (Pearson r = 0.81 F1, 0.92 IndyCar, 0.92 NASCAR), confirming grid position is a faithful proxy for actual race-start position across all three series. Using Lap 1 position instead of qualifying position as the predictor yields even larger partial R² values — 0.257 (F1), 0.087 (IndyCar), 0.048 (NASCAR) — suggesting the true track-position effect is, if anything, slightly understated by using the qualifying result alone rather than the position a driver actually starts from once any grid penalties are applied.
+As a secondary check, qualifying position correlates very strongly with observed Lap 1 running position (Pearson r = 0.81 F1, 0.92 IndyCar, 0.92 NASCAR). However, using Lap 1 position instead of qualifying position as the predictor yields even larger partial R² values — 0.257 (F1), 0.087 (IndyCar), 0.048 (NASCAR) — suggesting that whilst qualifying is important, there is a lot of information that is uncovered from Lap 1 variance.
 
 ## Discussion
 
-Qualifying proves to have statistically significant predictor of finish position, adjusting for race performance. However, this effect decreases in magnitude from F1 to IndyCar to NASCAR.
+Qualifying proves to have a statistically significant predictor of finish position, adjusting for race performance. However, this effect decreases in magnitude from F1 to IndyCar to NASCAR.
 
 Motorsport viewers can take this information to inform decisions about what to watch on a race weekend. For F1 fans, compared to NASCAR or IndyCar fans, because 17% of the variability in finish position not explained by driver skill can be explained by qualifying position, it is more important to tune in to qualifying sessions because of its importance to race day. It also gives NASCAR and IndyCar fans more hope for their drivers who qualify poorly, as it only accounts for 4 and 6 percent of the aforementioned variability.
 
-Additionally, these results can inform new viewers about their desired series to watch, and for the series themselves, what events they can market. If they enjoy watching qualifying and with that, a larger time investment in the sport, then perhaps F1 is the series to watch for them, as it has a larger effect on race day results than IndyCar or NASCAR. On the other hand, if they only want to watch an exciting race, then IndyCar and/or NASCAR is the way to go because there is more variance in finish position from start position, meaning there is more passing and more excitement for the viewer on a lap-by-lap basis. This is supported by the average number of passes for F1, IndyCar, and NASCAR races, which are 5, 12, and 29, respectively.
+Additionally, these results can inform new viewers about their desired series to watch, and for the series themselves, what events they can market. If a viewer enjoys watching qualifying and having a large time investment in watching a race series, then perhaps F1 is the series to watch for them, as it has a larger effect on race day results than IndyCar or NASCAR. On the other hand, if they only want to watch an exciting race, then IndyCar and/or NASCAR is the way to go because there is more variance in finish position from start position, meaning there is more passing and more excitement for the viewer on a lap-by-lap basis. This is supported by the average number of passes for F1, IndyCar, and NASCAR races, which are 5, 12, and 29, respectively.
 
-For the same reasons, F1 teams, relative to NASCAR and IndyCar teams, should be putting more effort into creating a solid qualifying performance because it has a larger effect on race results.
+For the same reasons, F1 teams, relative to NASCAR and IndyCar teams, should be putting more effort into creating a solid qualifying performance because it appears to have a larger effect on race results.
 
-F1 drivers should be super aggressive on lap one. The difference in the predictive value for qualifying position and lap one position is 8.7%, whilst only being 1.8% and 0.6% for IndyCar and NASCAR. These drivers can take a more relaxed approach to the first lap, as it is not devastating to informing race results.
+As a corollary, while qualifying is important, lap one running position is significantly more important for F1 drivers compared to IndyCar and NASCAR, as the difference in the predictive value for qualifying position and lap one position is 8.7%, 1.8%, and 0.6%, respectively. These drivers can take a more relaxed approach to the first lap, as it is not devastating to informing race results.
 
 ## Limitations and Future Work
 
