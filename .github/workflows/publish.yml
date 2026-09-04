@@ -8,15 +8,41 @@ name: Quarto Publish
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
+
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
+
     permissions:
       contents: write
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      # --------------------------------------------------
+      # Python
+      # --------------------------------------------------
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install \
+            jupyter \
+            nbformat \
+            numpy \
+            pandas \
+            matplotlib \
+            seaborn \
+            raceindycar
+
+      # --------------------------------------------------
+      # R
+      # --------------------------------------------------
       - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
@@ -24,18 +50,24 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           upgrade: 'TRUE'
-          packages:
+          packages: |
             any::remotes
             any::rmarkdown
             any::knitr
             any::tidyverse
-          install-quarto: false  # <-- Blocks the duplicate Quarto install
+          install-quarto: false
 
+      # --------------------------------------------------
+      # Quarto
+      # --------------------------------------------------
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
         with:
           tinytex: true
 
+      # --------------------------------------------------
+      # Render and publish
+      # --------------------------------------------------
       - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2
         with:
