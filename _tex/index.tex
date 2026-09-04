@@ -283,18 +283,6 @@ series, we adjust for driver performance to isolate the effects and try
 to gain actionable insight into the differences in race weekend
 operations across series.
 
-\section{RaceIndyCar}\label{raceindycar}
-
-RaceIndyCar is a Python pip-installable package to obtain and analyze
-IndyCar data. By scraping information from the official
-\href{https://www.indycar.com/}{IndyCar} website, we can examine all
-weekend events and their corresponding sessions.
-
-The specific information we have available depends on the session and
-release date. For example, not all races have the same number of
-practice sessions. Additionally, lap-by-lap data is only available for
-2013 and beyond (with all data being from 1996-Present).
-
 \subsection{Data Collection}\label{data-collection}
 
 Data was obtained using the FastF1 and PyNascar Python libraries. The
@@ -304,20 +292,36 @@ start position, finish position, average speed, and more are kept.
 Additionally, we obtain data for each lap of every race, including each
 driver's position, lap speed, and lap time.
 
+\section{RaceIndyCar Package}\label{raceindycar-package}
+
+\subsection{Introduction}\label{introduction-1}
+
+RaceIndyCar is pip installable, or available on
+\href{https://pypi.org/project/raceindycar}{PyPI}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pip install raceindycar}
+\end{Highlighting}
+\end{Shaded}
+
+Requires Python 3.10+. Dependencies (\texttt{pandas}, \texttt{requests},
+\texttt{requests-cache}, \texttt{pdfplumber}, \texttt{matplotlib}) are
+installed automatically.
+
 In an IndyCar season, there are around 17 race events that occur. Each
 race event typically spans a weekend, where within that event there are
 individual sessions (such as practices, qualifying, and the race
-itself). We use this idea of events and sessions in our implementation:
+itself). We scrape information from the official
+\href{https://www.indycar.com/}{IndyCar} website and use this idea of
+events and sessions in our implementation:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \ImportTok{import}\NormalTok{ raceindycar}
 
 \CommentTok{\# Enable caching so downloaded and parsed data can be reused.}
-\NormalTok{raceindycar.enable\_cache(}
-\NormalTok{    cache\_dir}\OperatorTok{=}\StringTok{".cache/raceindycar"}\NormalTok{,}
-\NormalTok{    cache\_format}\OperatorTok{=}\StringTok{"pickle"}\NormalTok{,}
-\NormalTok{)}
+\NormalTok{raceindycar.enable\_cache(cache\_dir}\OperatorTok{=}\StringTok{".cache/raceindycar"}\NormalTok{, cache\_format}\OperatorTok{=}\StringTok{"pickle"}\NormalTok{)}
 
 \CommentTok{\# Get all events for a given year}
 \NormalTok{races }\OperatorTok{=}\NormalTok{ raceindycar.get\_season\_events(}\DecValTok{2025}\NormalTok{)}
@@ -330,7 +334,7 @@ itself). We use this idea of events and sessions in our implementation:
 \CommentTok{\# Identify all sessions (such as practices and qualifying) for the event.}
 \NormalTok{session\_info }\OperatorTok{=}\NormalTok{ indy25.sessions}
 
-\CommentTok{\# Get a specific session from an event.}
+\CommentTok{\# Get a specific session from an event, with the edefault as the race session.}
 \CommentTok{\# The session argument can either be an EventsSessionID or a SessionName string.}
 \NormalTok{race\_session }\OperatorTok{=}\NormalTok{ indy25.get\_session(session}\OperatorTok{=}\StringTok{"R"}\NormalTok{)}
 
@@ -371,11 +375,7 @@ Notebook}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{det25\_race }\OperatorTok{=}\NormalTok{ raceindycar.get\_session(}
-    \DecValTok{2025}\NormalTok{,}
-    \StringTok{"Detroit Grand Prix"}\NormalTok{,}
-\NormalTok{    session}\OperatorTok{=}\StringTok{"R"}\NormalTok{,}
-\NormalTok{)}
+\NormalTok{det25\_race }\OperatorTok{=}\NormalTok{ raceindycar.get\_session(}\DecValTok{2025}\NormalTok{, }\StringTok{"Detroit Grand Prix"}\NormalTok{, session}\OperatorTok{=}\StringTok{"R"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -384,9 +384,9 @@ Notebook}}
 Notebook}}
 
 From a session, we can obtain the lap-by-lap data, with information on
-every section of an IndyCar track. Lap results from a given session are
-scraped from PDFs that are around 500 pages long, so loading laps can
-take anywhere from 30--100 seconds.
+every section of an IndyCar track. Lap results are scraped from PDFs
+that are up to 500 pages long, so loading laps can take anywhere from
+30--100 seconds.
 
 \textsubscript{Source:
 \href{https://ArchithSharma.github.io/raceindycar_manuscript/index.qmd.html}{Article
@@ -459,24 +459,7 @@ Notebook}}
 \href{https://ArchithSharma.github.io/raceindycar_manuscript/index.qmd.html}{Article
 Notebook}}
 
-\subsection{Package Design and Usage}\label{package-design-and-usage}
-
-\subsubsection{Installation}\label{installation}
-
-RaceIndyCar is pip installable, or available on
-\href{https://pypi.org/project/raceindycar}{PyPI}.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{pip install raceindycar}
-\end{Highlighting}
-\end{Shaded}
-
-Requires Python 3.10+. Dependencies (\texttt{pandas}, \texttt{requests},
-\texttt{requests-cache}, \texttt{pdfplumber}, \texttt{matplotlib}) are
-installed automatically.
-
-\subsubsection{Plotting}\label{plotting}
+\subsection{Plotting}\label{plotting}
 
 RaceIndyCar also offers six plotting functions with preset colors for
 drivers and teams. The default arguments for all of these functions will
@@ -501,17 +484,11 @@ Notebook}}
 \NormalTok{plotting.setup\_mpl()}
 
 \CommentTok{\# Position{-}by{-}lap line chart}
-\NormalTok{fig, ax }\OperatorTok{=}\NormalTok{ plotting.plot\_position(}
-\NormalTok{    det25\_race,}
-\NormalTok{    drivers}\OperatorTok{=}\NormalTok{drivers,}
-\NormalTok{)}
+\NormalTok{fig, ax }\OperatorTok{=}\NormalTok{ plotting.plot\_position(det25\_race, drivers}\OperatorTok{=}\NormalTok{drivers)}
 \NormalTok{fig.set\_size\_inches(}\DecValTok{4}\NormalTok{, }\FloatTok{2.5}\NormalTok{)}
 
-\CommentTok{\# Lap time line chart}
-    \CommentTok{\# fig, ax = plotting.plot\_lap\_times(}
-    \CommentTok{\#    det25\_race,}
-    \CommentTok{\#    drivers=drivers,}
-    \CommentTok{\#)}
+\CommentTok{\# Lap time line chart can also be shown}
+\CommentTok{\# fig, ax = plotting.plot\_lap\_times(det25\_race, drivers=drivers)}
 
 \NormalTok{plt.show()}
 \end{Highlighting}
@@ -529,7 +506,10 @@ For example, \texttt{plot\_qualifying\_vs\_finish} is shown here. In
 this case, Alex Palou crashed on lap 72, so he does not have a running
 position afterwards.
 
-Additionally, we can plot information for multiple races:
+Additionally, we can plot information for multiple races. For example,
+\texttt{plot\_qualifying\_vs\_finish} is shown below the code chunk.
+Other functions such as \texttt{plot\_position\_gain} and
+\texttt{plot\_metric\_vs\_qualifying} are not shown for brevity's sake.
 
 \textsubscript{Source:
 \href{https://ArchithSharma.github.io/raceindycar_manuscript/index.qmd.html}{Article
@@ -539,17 +519,12 @@ Notebook}}
 \begin{Highlighting}[]
 \ImportTok{import}\NormalTok{ pandas }\ImportTok{as}\NormalTok{ pd}
 
-\NormalTok{det26\_race }\OperatorTok{=}\NormalTok{ raceindycar.get\_session(}
-    \DecValTok{2026}\NormalTok{,}
-    \StringTok{"Detroit Grand Prix"}\NormalTok{,}
-\NormalTok{    session}\OperatorTok{=}\StringTok{"R"}\NormalTok{,}
-\NormalTok{)}
-
+\NormalTok{det26\_race }\OperatorTok{=}\NormalTok{ raceindycar.get\_session(}\DecValTok{2026}\NormalTok{, }\StringTok{"Detroit Grand Prix"}\NormalTok{, session}\OperatorTok{=}\StringTok{"R"}\NormalTok{)}
 \NormalTok{det26\_race.load(laps}\OperatorTok{=}\VariableTok{True}\NormalTok{)}
 
 \NormalTok{combined\_results }\OperatorTok{=}\NormalTok{ pd.concat([}
 \NormalTok{    det25\_race.results.assign(Year}\OperatorTok{=}\DecValTok{2025}\NormalTok{),}
-\NormalTok{    det26\_race.results.assign(Year}\OperatorTok{=}\DecValTok{2026}\NormalTok{),}
+\NormalTok{    det26\_race.results.assign(Year}\OperatorTok{=}\DecValTok{2026}\NormalTok{)}
 \NormalTok{])}
 
 \CommentTok{\# Scatter of starting position vs finishing position with trend line}
@@ -557,17 +532,6 @@ Notebook}}
 \NormalTok{    combined\_results}
 \NormalTok{)}
 \NormalTok{fig.set\_size\_inches(}\DecValTok{4}\NormalTok{, }\FloatTok{2.5}\NormalTok{)}
-
-\CommentTok{\# Histogram of positions gained/lost from start to finish}
-    \CommentTok{\#fig, ax = plotting.plot\_position\_gain(}
-    \CommentTok{\#    combined\_results}
-    \CommentTok{\#)}
-
-\CommentTok{\# Scatter of a results metric vs qualifying position, with trend line}
-    \CommentTok{\#fig, ax = plotting.plot\_metric\_vs\_qualifying(}
-    \CommentTok{\#    combined\_results,}
-    \CommentTok{\#    metric\_col="PointsEarned",}
-    \CommentTok{\#)}
 
 \NormalTok{plt.show()}
 \end{Highlighting}
@@ -581,21 +545,16 @@ Notebook}}
 \href{https://ArchithSharma.github.io/raceindycar_manuscript/index.qmd.html}{Article
 Notebook}}
 
-For example, \texttt{plot\_qualifying\_vs\_finish} is shown here.
-
-\subsubsection{Caching}\label{caching}
+\subsection{Caching}\label{caching}
 
 This library mirrors
 \href{https://docs.fastf1.dev/api_reference/cache_and_rate_limits.html}{FastF1's
 \texttt{Cache}} API, and there are two stages for caching.
 
 The first stage uses an SQLite table to store HTTP requests and results
-for \href{https://www.indycar.com/}{IndyCar}.
-
-The second stage stores Pickle/CSV files that contain information from
-loading a race.
-
-Requests are rate limited to around one request per two seconds.
+for \href{https://www.indycar.com/}{IndyCar}, which are rate limited to
+around one request per two seconds. The second stage stores Pickle/CSV
+files that contain information from loading a race.
 
 \textsubscript{Source:
 \href{https://ArchithSharma.github.io/raceindycar_manuscript/index.qmd.html}{Article
@@ -605,12 +564,8 @@ Notebook}}
 \begin{Highlighting}[]
 \ImportTok{from}\NormalTok{ raceindycar.cache }\ImportTok{import}\NormalTok{ Cache}
 
-\CommentTok{\# Enable Cache with specified directory.}
-\CommentTok{\# Use either "pickle" or "csv" format.}
-\NormalTok{raceindycar.enable\_cache(}
-\NormalTok{    cache\_dir}\OperatorTok{=}\StringTok{".cache/raceindycar"}\NormalTok{,}
-\NormalTok{    cache\_format}\OperatorTok{=}\StringTok{"pickle"}\NormalTok{,}
-\NormalTok{)}
+\CommentTok{\# Enable Cache with specified directory using either pickle or csv format}
+\NormalTok{raceindycar.enable\_cache(cache\_dir}\OperatorTok{=}\StringTok{".cache/raceindycar"}\NormalTok{, cache\_format}\OperatorTok{=}\StringTok{"pickle"}\NormalTok{)}
 
 \CommentTok{\# Wipe Stage 2 (parsed/pickle) data, keeping the HTTP cache.}
 \CommentTok{\# Optionally, wipe all Stage 1 HTTP requests with deep=True.}
@@ -619,10 +574,6 @@ Notebook}}
 \CommentTok{\# Never hit the network and only use cached data,}
 \CommentTok{\# raising an error if the data is not found locally.}
 \NormalTok{Cache.offline\_mode(}\VariableTok{True}\NormalTok{)}
-
-\CommentTok{\# Temporarily bypass the cache.}
-\ControlFlowTok{with}\NormalTok{ Cache.disabled():}
-\NormalTok{    ...}
 \end{Highlighting}
 \end{Shaded}
 
@@ -630,7 +581,7 @@ Notebook}}
 \href{https://ArchithSharma.github.io/raceindycar_manuscript/index.qmd.html}{Article
 Notebook}}
 
-\subsubsection{Summary and Application}\label{summary-and-application}
+\subsection{Summary and Application}\label{summary-and-application}
 
 Through utilizing official \href{https://www.indycar.com/}{IndyCar
 data}, RaceIndyCar obtains session-level data, even down to individual
@@ -643,8 +594,8 @@ level, we can start to identify patterns and trends to create actionable
 results, such as identifying optimal practice time, resource allocation
 to adjusting the car from qualifying to race day, and more.
 
-\section{Quantifying the Importance of
-Qualifying}\label{quantifying-the-importance-of-qualifying}
+\section{Quantifying the Importance of Qualifying Across Race
+Series}\label{quantifying-the-importance-of-qualifying-across-race-series}
 
 Let \(Q_{ir}\), \(F_{ir}\) denote qualifying and finishing position for
 driver \(i\) in race \(r\), and \(L_{ir\ell}\) the lap time on lap
@@ -1064,11 +1015,8 @@ it because they will gain back those lost positions.
 \section{Conclusion}\label{conclusion}
 
 Overall, this project creates new opportunities for data analytics in
-the IndyCar realm through the raceindycar package and offers a novel
+the IndyCar realm through the RaceIndyCar package and offers a novel
 method of comparing races across series through our numerical analysis.
-
-\section*{References}\label{references}
-\addcontentsline{toc}{section}{References}
 
 \textsubscript{Source:
 \href{https://ArchithSharma.github.io/raceindycar_manuscript/index.qmd.html}{Article
