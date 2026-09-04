@@ -1,5 +1,5 @@
 ---
-title: "Start Strong: An Analysis of Motorsport Qualifying with a Novel Python Package"
+title: "Start Strong: An Analysis of Motorsport Qualifying with RaceIndyCar, a Novel Python Package"
 author:
   - name: "Anonymous"
     orcid: "[0000-0000-0000-0000]"
