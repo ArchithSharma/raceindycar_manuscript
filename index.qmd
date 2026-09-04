@@ -94,7 +94,7 @@ race_session.load()
 
 # A Pandas DataFrame of race data, including start position,
 # finish position, average speed, etc.
-race_session.results.head(3).iloc[:, :4]
+race_session.results.sample(n=3, random_state=314).iloc[:, :6]
 ```
 
 It is not required to get an event and then get a session from that event as shown above. We can go straight to a session for a weekend:
@@ -115,7 +115,7 @@ race_session.load(laps=True)
 
 # A Pandas DataFrame of each lap, including sectional and position data
 laps = race_session.laps
-laps.head(3).iloc[:, :6]
+laps.sample(n=3, random_state=314).iloc[:, :6]
 ```
 
 Additionally, there are some convenience filters for lap data for accessibility. Note that team names and drivers can either be a string or a list:
@@ -129,7 +129,7 @@ laps.pick_wo_pit()  # Excludes pit-road laps
 laps.pick_quicklaps(threshold=1.07)  # Laps within threshold of fastest.
 laps.pick_fastest()
 example = laps.pick_laps(range(1, 21))
-example.head(3).iloc[:, :6]
+example.sample(n=3, random_state=314).iloc[:, :6]
 ```
 
 ### Package Design and Usage
